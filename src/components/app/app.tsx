@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 import { Article } from '../article/Article';
 import { ArticleParamsForm } from '../article-params-form/ArticleParamsForm';
+import { ErrorBoundary, ErrorMessage } from '../error-boundary/ErrorBoundary';
 import { defaultArticleState } from './../../constants/articleProps';
 
 import styles from './app.module.scss';
@@ -22,8 +23,10 @@ export const App = () => {
 					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm values={articleState} onChange={setArticleState} />
-			<Article />
+			<ErrorBoundary errorComponent={ErrorMessage}>
+				<ArticleParamsForm values={articleState} onChange={setArticleState} />
+				<Article />
+			</ErrorBoundary>
 		</main>
 	);
 };
