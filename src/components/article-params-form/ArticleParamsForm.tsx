@@ -1,10 +1,19 @@
 import clsx from 'clsx';
 import { ArrowButton } from 'src/ui/arrow-button';
+import { Select } from 'src/ui/select/Select';
+import { RadioGroup } from 'src/ui/radio-group/RadioGroup';
+import { Separator } from 'src/ui/separator/Separator';
 import { Button } from 'src/ui/button';
 import { useRef, useState, useEffect, FormEvent } from 'react';
 import {
 	ArticleStateType,
 	defaultArticleState,
+	fontFamilyOptions,
+	OptionType,
+	fontSizeOptions,
+	fontColors,
+	backgroundColors,
+	contentWidthArr,
 } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
@@ -49,6 +58,26 @@ export const ArticleParamsForm = ({
 		onChange(defaultArticleState);
 	};
 
+	const handleFontFamilyChange = (selected: OptionType) => {
+		setFormState((prev) => ({ ...prev, fontFamilyOption: selected }));
+	};
+
+	const handleFontSizeChange = (selected: OptionType) => {
+		setFormState((prev) => ({ ...prev, fontSizeOption: selected }));
+	};
+
+	const handleFontColorChange = (selected: OptionType) => {
+		setFormState((prev) => ({ ...prev, fontColor: selected }));
+	};
+
+	const handleBackgroundChange = (selected: OptionType) => {
+		setFormState((prev) => ({ ...prev, backgroundColor: selected }));
+	};
+
+	const handleContentWidthChange = (selected: OptionType) => {
+		setFormState((prev) => ({ ...prev, contentWidth: selected }));
+	};
+
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
@@ -58,6 +87,42 @@ export const ArticleParamsForm = ({
 				})}
 				ref={containerRef}>
 				<form className={styles.form} onSubmit={handleSubmit}>
+					<Select
+						selected={formState.fontFamilyOption}
+						options={fontFamilyOptions}
+						placeholder={formState.fontFamilyOption.title}
+						onChange={handleFontFamilyChange}
+						title='Шрифт'
+					/>
+					<RadioGroup
+						name='fontSize'
+						options={fontSizeOptions}
+						selected={formState.fontSizeOption}
+						onChange={handleFontSizeChange}
+						title='Размер шрифта'
+					/>
+					<Select
+						selected={formState.fontColor}
+						options={fontColors}
+						placeholder={formState.fontColor.title}
+						onChange={handleFontColorChange}
+						title='Цвет шрифта'
+					/>
+					<Separator />
+					<Select
+						selected={formState.backgroundColor}
+						options={backgroundColors}
+						placeholder={formState.backgroundColor.title}
+						onChange={handleBackgroundChange}
+						title='Цвет фона'
+					/>
+					<Select
+						selected={formState.contentWidth}
+						options={contentWidthArr}
+						placeholder={formState.contentWidth.title}
+						onChange={handleContentWidthChange}
+						title='Ширина контента'
+					/>
 					<div className={styles.bottomContainer}>
 						<Button
 							title='Сбросить'
