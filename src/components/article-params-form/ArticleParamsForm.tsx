@@ -4,6 +4,7 @@ import { Select } from 'src/ui/select/Select';
 import { RadioGroup } from 'src/ui/radio-group/RadioGroup';
 import { Separator } from 'src/ui/separator/Separator';
 import { Button } from 'src/ui/button';
+import { Text } from 'src/ui/text/Text';
 import { useRef, useState, useEffect, FormEvent } from 'react';
 import {
 	ArticleStateType,
@@ -28,11 +29,11 @@ export const ArticleParamsForm = ({
 	onChange,
 }: ArticleParamsFormProps) => {
 	const [formState, setFormState] = useState(values);
-	const [isOpen, setIsOpen] = useState(false);
+	const [isSidebarOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
-		if (!isOpen) return;
+		if (!isSidebarOpen) return;
 
 		const handleOutsideClick = (event: MouseEvent) => {
 			if (
@@ -46,7 +47,7 @@ export const ArticleParamsForm = ({
 		document.addEventListener('mousedown', handleOutsideClick);
 
 		return () => document.removeEventListener('mousedown', handleOutsideClick);
-	}, [isOpen]);
+	}, [isSidebarOpen]);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -58,54 +59,48 @@ export const ArticleParamsForm = ({
 		onChange(defaultArticleState);
 	};
 
-	const handleFontFamilyChange = (selected: OptionType) => {
-		setFormState((prev) => ({ ...prev, fontFamilyOption: selected }));
-	};
-
-	const handleFontSizeChange = (selected: OptionType) => {
-		setFormState((prev) => ({ ...prev, fontSizeOption: selected }));
-	};
-
-	const handleFontColorChange = (selected: OptionType) => {
-		setFormState((prev) => ({ ...prev, fontColor: selected }));
-	};
-
-	const handleBackgroundChange = (selected: OptionType) => {
-		setFormState((prev) => ({ ...prev, backgroundColor: selected }));
-	};
-
-	const handleContentWidthChange = (selected: OptionType) => {
-		setFormState((prev) => ({ ...prev, contentWidth: selected }));
-	};
+	const handleChange =
+		(key: keyof ArticleStateType) => (option: OptionType) => {
+			setFormState((prev) => ({ ...prev, [key]: option }));
+		};
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
+			<ArrowButton
+				isOpen={isSidebarOpen}
+				onClick={() => setIsOpen((prev) => !prev)}
+			/>
 			<aside
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isSidebarOpen,
 				})}
 				ref={containerRef}>
-				<form className={styles.form} onSubmit={handleSubmit}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
+					<Text as='h2' size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 					<Select
 						selected={formState.fontFamilyOption}
 						options={fontFamilyOptions}
 						placeholder={formState.fontFamilyOption.title}
-						onChange={handleFontFamilyChange}
+						onChange={handleChange('fontFamilyOption')}
 						title='Шрифт'
 					/>
 					<RadioGroup
 						name='fontSize'
 						options={fontSizeOptions}
 						selected={formState.fontSizeOption}
-						onChange={handleFontSizeChange}
+						onChange={handleChange('fontSizeOption')}
 						title='Размер шрифта'
 					/>
 					<Select
 						selected={formState.fontColor}
 						options={fontColors}
 						placeholder={formState.fontColor.title}
-						onChange={handleFontColorChange}
+						onChange={handleChange('fontColor')}
 						title='Цвет шрифта'
 					/>
 					<Separator />
@@ -113,23 +108,18 @@ export const ArticleParamsForm = ({
 						selected={formState.backgroundColor}
 						options={backgroundColors}
 						placeholder={formState.backgroundColor.title}
-						onChange={handleBackgroundChange}
+						onChange={handleChange('backgroundColor')}
 						title='Цвет фона'
 					/>
 					<Select
 						selected={formState.contentWidth}
 						options={contentWidthArr}
 						placeholder={formState.contentWidth.title}
-						onChange={handleContentWidthChange}
+						onChange={handleChange('contentWidth')}
 						title='Ширина контента'
 					/>
 					<div className={styles.bottomContainer}>
-						<Button
-							title='Сбросить'
-							htmlType='reset'
-							type='clear'
-							onClick={handleReset}
-						/>
+						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
